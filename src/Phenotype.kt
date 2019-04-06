@@ -17,7 +17,8 @@ class Phenotype(val problem: Problem) {
         schedule = MutableList(problem.numberJobs) { mutableListOf<Int>() }
     }
 
-    fun fromSequence(sequence: List<Int>) {
+    fun fromSequenceSerial(sequence: List<Int>) {
+        // TODO: put subjob in before previous subjobs on same machine if possible
         // takes sequence of jobs and makes a schedule
 
         // earliest time machines are available
@@ -47,7 +48,11 @@ class Phenotype(val problem: Problem) {
         }
     }
 
-    fun getFitness(): Int {
+    fun fromSequenceParallell(sequence: List<Int>) {
+        // TODO: iterate through time slots instead of sequence list
+    }
+
+    fun getCost(): Int {
         var time = 0
         for ((i, list) in schedule.withIndex()) {
             if (problem.jobs[i].last().second + list.last() > time) {
@@ -65,7 +70,7 @@ class Phenotype(val problem: Problem) {
             "#606000", "#600060", "#006060", "#606060", "#A00000", "#00A000", "#0000A0", "#A0A000", "#A000A0", "#00A0A0",
             "#A0A0A0", "#E00000", "#00E000", "#0000E0", "#E0E000", "#E000E0", "#00E0E0", "#E0E0E0")
 
-        val width = 26 + 10 * (getFitness() + 2)
+        val width = 26 + 10 * (getCost() + 2)
         val height = problem.numberMachines * 24 + 6 + 16
         val img = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
 

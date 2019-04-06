@@ -5,16 +5,11 @@
 fun main(args: Array<String>) {
     val p = Problem()
     p.read("Test Data/1.txt")
-    val pheno = Phenotype(p)
 
-    val geno = Genotype(p)
-    val geno2 = Genotype(p)
-    geno.randomInitialisation()
-    geno2.swapInitialisation(geno)
-    println(geno.permutationList)
-    println(geno2.permutationList)
+    val abc = ABC(p, 100, 20, 10)
+    val geno = abc.run()
 
-    pheno.fromSequence(geno.permutationList)
-    println(pheno.getFitness())
-    pheno.plot()
+    println(geno.listRep)
+    println(geno.sequence)
+    geno.pheno.plot()
 }
