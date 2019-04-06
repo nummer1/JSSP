@@ -3,9 +3,9 @@ import kotlin.random.Random
 
 class ABC(val problem: Problem, val iterations: Int, val populationSize: Int, val limit: Int) {
 
-    val emplyoeeBees: MutableList<RandomKeyList>
-    val onlookerBees: MutableList<RandomKeyList>
-    val cyclesSinceImproved: MutableList<Int>
+    private val emplyoeeBees: MutableList<RandomKeyList>
+    private val onlookerBees: MutableList<RandomKeyList>
+    private val cyclesSinceImproved: MutableList<Int>
 
     init {
         emplyoeeBees = mutableListOf()
@@ -15,14 +15,6 @@ class ABC(val problem: Problem, val iterations: Int, val populationSize: Int, va
 
     fun run(): RandomKeyList {
         // initialise population
-        // while not stop
-        //   employee bees find one neighbour and select greedy
-        //   onlookers bees find one neighbour and select greedy
-        //   abandon sites that has not improved in $limit cycles
-        //   send scouts out
-        // neighbour = υmi = xmi + ϕmi(xmi − xki)
-
-        // initialise population
         for (i in 0.until(populationSize)) {
             // initialise employeeBees
             val pop = RandomKeyList(problem)
@@ -30,24 +22,23 @@ class ABC(val problem: Problem, val iterations: Int, val populationSize: Int, va
             emplyoeeBees.add(pop)
             cyclesSinceImproved.add(0)
             // initialise employee bees
-            // TODO: check pop being in two lists does not cause trouble
             onlookerBees.add(pop)
         }
 
         var bestSolution = emplyoeeBees[0]
         for (k in 0.until(iterations)) {
-            // employeeBees check for better neighbours
+            // employeeBees checks for better neighbours
             for ((i, pop) in emplyoeeBees.withIndex()) {
                 val randPop = emplyoeeBees[(i + Random.nextInt(1, populationSize)) % populationSize]
                 val newPop = RandomKeyList(problem)
                 newPop.neighbourInitialisation(randPop)
-                if (newPop.fitness > pop.fitness) {
+                if (newPop.cost < pop.cost) {
                     emplyoeeBees[i] = newPop
                     cyclesSinceImproved[i] = 0
                 }
             }
 
-            // onlookerBees check for better neighbour in promising regions
+            // onlookerBees checks for better neighbour in promising regions
             var totalFitness = 0.0
             val cumulativeFitness = MutableList<Double>(populationSize) { totalFitness += emplyoeeBees[it].fitness; totalFitness }
             for (i in onlookerBees.indices) {
@@ -62,20 +53,22 @@ class ABC(val problem: Problem, val iterations: Int, val populationSize: Int, va
 
                 val newPop = RandomKeyList(problem)
                 newPop.neighbourInitialisation(randPop)
-                if (newPop.fitness > emplyoeeBees[i].fitness) {
+                if (newPop.cost < emplyoeeBees[i].cost) {
                     emplyoeeBees[i] = newPop
                     cyclesSinceImproved[i] = 0
                 }
             }
 
+            // abandon sites and remember best site
             for (i in cyclesSinceImproved.indices) {
                 cyclesSinceImproved[i] += 1
                 if (cyclesSinceImproved[i] >= limit) {
                     val newPop = RandomKeyList(problem)
                     newPop.randomInitialisation()
                     emplyoeeBees[i] = newPop
+                    cyclesSinceImproved[i] = 0
                 }
-                if (emplyoeeBees[i].fitness > bestSolution.fitness) {
+                if (emplyoeeBees[i].cost < bestSolution.cost) {
                     bestSolution = emplyoeeBees[i]
                 }
             }

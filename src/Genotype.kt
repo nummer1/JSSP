@@ -39,7 +39,6 @@ class RandomKeyList(val problem: Problem) {
         // randomly initialize the keyList
         checkInitialisation()
         for (job in problem.jobs) {
-            // TODO: use variable as upper and lower bound for initialization
             listRep.addAll(MutableList<Double>(job.size) { Random.nextDouble(-1.0, 1.0) })
         }
         listRep.shuffle()
