@@ -3,8 +3,8 @@ import kotlin.random.Random
 
 class ABC(val problem: Problem, val iterations: Int, val populationSize: Int, val limit: Int) {
 
-    private val emplyoeeBees: MutableList<RandomKeyList>
-    private val onlookerBees: MutableList<RandomKeyList>
+    private val emplyoeeBees: MutableList<PermutationList>
+    private val onlookerBees: MutableList<PermutationList>
     private val cyclesSinceImproved: MutableList<Int>
 
     init {
@@ -13,11 +13,11 @@ class ABC(val problem: Problem, val iterations: Int, val populationSize: Int, va
         cyclesSinceImproved = mutableListOf()
     }
 
-    fun run(): RandomKeyList {
+    fun run(): PermutationList {
         // initialise population
         for (i in 0.until(populationSize)) {
             // initialise employeeBees
-            val pop = RandomKeyList(problem)
+            val pop = PermutationList(problem)
             pop.randomInitialisation()
             emplyoeeBees.add(pop)
             cyclesSinceImproved.add(0)
@@ -30,7 +30,7 @@ class ABC(val problem: Problem, val iterations: Int, val populationSize: Int, va
             // employeeBees checks for better neighbours
             for ((i, pop) in emplyoeeBees.withIndex()) {
                 val randPop = emplyoeeBees[(i + Random.nextInt(1, populationSize)) % populationSize]
-                val newPop = RandomKeyList(problem)
+                val newPop = PermutationList(problem)
                 newPop.neighbourInitialisation(randPop)
                 if (newPop.cost < pop.cost) {
                     emplyoeeBees[i] = newPop
@@ -51,7 +51,7 @@ class ABC(val problem: Problem, val iterations: Int, val populationSize: Int, va
                     }
                 }
 
-                val newPop = RandomKeyList(problem)
+                val newPop = PermutationList(problem)
                 newPop.neighbourInitialisation(randPop)
                 if (newPop.cost < emplyoeeBees[i].cost) {
                     emplyoeeBees[i] = newPop
@@ -63,7 +63,7 @@ class ABC(val problem: Problem, val iterations: Int, val populationSize: Int, va
             for (i in cyclesSinceImproved.indices) {
                 cyclesSinceImproved[i] += 1
                 if (cyclesSinceImproved[i] >= limit) {
-                    val newPop = RandomKeyList(problem)
+                    val newPop = PermutationList(problem)
                     newPop.randomInitialisation()
                     emplyoeeBees[i] = newPop
                     cyclesSinceImproved[i] = 0

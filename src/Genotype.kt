@@ -4,14 +4,12 @@ import kotlin.random.Random
 class RandomKeyList(val problem: Problem) {
 
     val listRep: MutableList<Double>
-    val sequence: MutableList<Int>
     val pheno: Phenotype
     var cost: Int
     var fitness: Double
 
     init {
         listRep = mutableListOf()
-        sequence = mutableListOf()
         pheno = Phenotype(problem)
         cost = Int.MAX_VALUE
         fitness = 0.0
@@ -22,8 +20,7 @@ class RandomKeyList(val problem: Problem) {
         if (listRep.isEmpty()) {
             println("Error in RandomKeyList.createPheno: listRep is not initialised")
         }
-        toSequenceList1()
-        pheno.fromSequenceSerial(sequence)
+        pheno.fromSequenceSerial(toSequenceList1())
         cost = pheno.getCost()
         fitness = 1.0/cost
     }
@@ -42,6 +39,18 @@ class RandomKeyList(val problem: Problem) {
             listRep.addAll(MutableList<Double>(job.size) { Random.nextDouble(-1.0, 1.0) })
         }
         listRep.shuffle()
+        createPheno()
+    }
+
+    fun ShortestJobFirstInitialisation() {
+        checkInitialisation()
+        // TODO
+        createPheno()
+    }
+
+    fun EarliestFinishInitialisation() {
+        checkInitialisation()
+        // TODO
         createPheno()
     }
 
@@ -66,6 +75,7 @@ class RandomKeyList(val problem: Problem) {
         }
         indexList.sortBy { it.second }
 
+        val sequence = mutableListOf<Int>()
         for (p in indexList) {
             sequence.add(p.first)
         }
@@ -84,6 +94,7 @@ class RandomKeyList(val problem: Problem) {
         }
 
         // TODO: throws CME
+        val sequence = mutableListOf<Int>()
         while (true) {
             val sList = subLists.minBy { it[0] }!!
             val sIndex = subLists.indexOf(sList)
@@ -105,22 +116,60 @@ class RandomKeyList(val problem: Problem) {
 class PermutationList(val problem: Problem) {
 
     val listRep: MutableList<Int>
+    val pheno: Phenotype
+    var cost: Int
+    var fitness: Double
 
     init {
         listRep = mutableListOf()
+        pheno = Phenotype(problem)
+        cost = Int.MAX_VALUE
+        fitness = 0.0
+    }
+
+    private fun checkInitialisation() {
+        // prints error if initialisation already happened
+        if (listRep.isNotEmpty()) {
+            println("Error in RandomKeyList: listRep already initialised")
+        }
+    }
+
+    private fun createPheno() {
+        // create phenotype and calculate cost
+        if (listRep.isEmpty()) {
+            println("Error in RandomKeyList.createPheno: listRep is not initialised")
+        }
+        pheno.fromSequenceSerial(listRep)
+        cost = pheno.getCost()
+        fitness = 1.0/cost
     }
 
     fun randomInitialisation() {
         // randomly initialise the listRep
+        checkInitialisation()
         for ((i, job) in problem.jobs.withIndex()) {
             listRep.addAll(MutableList<Int>(job.size) { i })
         }
         listRep.shuffle()
+        createPheno()
     }
 
-    fun swapInitialisation(gene: PermutationList) {
+    fun neighbourInitialisation(neighbour: PermutationList) {
+        // initialise from neighbour as used in artificial bee colony
+        checkInitialisation()
+        listRep.addAll(neighbour.listRep)
+        val rand = Random.nextDouble(0.0, 1.0)
+        when {
+            rand < 0.25 -> swap()
+            rand < 0.5 -> insert()
+            rand < 0.75 -> {swap(); swap()}
+            else -> {insert(); insert()}
+        }
+        createPheno()
+    }
+
+    private fun swap() {
         // swap two random items
-        listRep.addAll(gene.listRep)
         val rand1 = Random.nextInt(0, listRep.size)
         val rand2 = (rand1 + Random.nextInt(1, listRep.size)) % listRep.size
 
@@ -134,10 +183,9 @@ class PermutationList(val problem: Problem) {
         listRep[rand1] = listRep[rand2].also { listRep[rand2] = listRep[rand1] }
     }
 
-    fun insertInitialisation(gene: PermutationList) {
+    private fun insert() {
         // TODO: make not insert at same place
         // move an item to another index
-        listRep.addAll(gene.listRep)
         var rand = Random.nextInt(0, listRep.size)
         val insert = listRep[rand]
         listRep.removeAt(rand)

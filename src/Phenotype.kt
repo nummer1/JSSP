@@ -20,6 +20,12 @@ class Phenotype(val problem: Problem) {
     fun fromSequenceSerial(sequence: List<Int>) {
         // TODO: put subjob in before previous subjobs on same machine if possible
         // takes sequence of jobs and makes a schedule
+        for (s in schedule) {
+            if (s.isNotEmpty()) {
+                println("Warning: schedule already initialised in Phenotype.fromSequence")
+                s.clear()
+            }
+        }
 
         // earliest time machines are available
         val machineTimes = MutableList<Int>(problem.numberJobs) { 0 }
@@ -53,6 +59,10 @@ class Phenotype(val problem: Problem) {
     }
 
     fun getCost(): Int {
+        if (schedule.isEmpty()) {
+            println("Error: schedule is empty in Phenotype.getCost")
+        }
+
         var time = 0
         for ((i, list) in schedule.withIndex()) {
             if (problem.jobs[i].last().second + list.last() > time) {
