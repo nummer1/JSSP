@@ -22,7 +22,6 @@ class Phenotype(val problem: Problem) {
         // takes sequence of jobs and makes a schedule
         for (s in schedule) {
             if (s.isNotEmpty()) {
-                println("Warning: schedule already initialised in Phenotype.fromSequence")
                 s.clear()
             }
         }

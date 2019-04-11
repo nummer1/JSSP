@@ -1,7 +1,9 @@
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.random.Random
 
 
-class RandomKeyList(val problem: Problem) {
+class RandomKeyList(val problem: Problem, val maxV: Double) {
 
     val listRep: MutableList<Double>
     val velocity: MutableList<Double>
@@ -41,7 +43,7 @@ class RandomKeyList(val problem: Problem) {
         checkInitialisation()
         for (job in problem.jobs) {
             listRep.addAll(MutableList<Double>(job.size) { Random.nextDouble(-1.0, 1.0) })
-            velocity.addAll(MutableList<Double>(job.size) { Random.nextDouble(-1.0, 1.0) })
+            velocity.addAll(MutableList<Double>(job.size) { Random.nextDouble(-maxV, maxV) })
         }
         pBest.addAll(listRep)
         createPheno()
@@ -52,14 +54,17 @@ class RandomKeyList(val problem: Problem) {
         checkInitialisation()
         listRep.addAll(neighbour.listRep)
         val randDim = Random.nextInt(0, neighbour.listRep.size)
-        listRep[randDim] += Random.nextDouble(-1.0, 1.0) * (listRep[randDim] - neighbour.listRep[randDim])
+        listRep[randDim] += Random.nextDouble(-maxV, maxV) * (listRep[randDim] - neighbour.listRep[randDim])
         createPheno()
     }
 
     fun updatePosition(gBest: MutableList<Double>) {
         // update position with velocity as used in PSO
         for (i in velocity.indices) {
-            velocity[i] += 2 * Random.nextDouble(0.0, 1.0) * (pBest[i] - listRep[i]) + 2 * Random.nextDouble(0.0, 1.0) * (gBest[i] - listRep[i])
+            val v = 1.0 * velocity[i] + (2.0 * Random.nextDouble(0.0, 1.0) * (pBest[i] - listRep[i]) + 2.0 * Random.nextDouble(0.0, 1.0) * (gBest[i] - listRep[i]))
+            velocity[i] = if (v < 0) max(v, -maxV) else min(v, maxV)
+//            val p = listRep[i] + velocity[i]
+//            listRep[i] = if (p < 0) max(p, -maxP) else min(p, maxP)
             listRep[i] += velocity[i]
         }
 
