@@ -71,7 +71,7 @@ class Phenotype(val problem: Problem) {
         return time
     }
 
-    fun plot() {
+    fun plot(fileName: String) {
         val colorList = mutableListOf("#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF", "#800000",
             "#008000", "#000080", "#808000", "#800080", "#008080", "#808080", "#C00000", "#00C000", "#0000C0", "#C0C000",
             "#C000C0", "#00C0C0", "#C0C0C0", "#400000", "#004000", "#000040", "#404000", "#400040", "#004040", "#404040",
@@ -127,6 +127,6 @@ class Phenotype(val problem: Problem) {
         }
         graph.dispose()
 
-        ImageIO.write(img, "png", File("ganttcharts/test.png"))
+        ImageIO.write(img, "png", File("ganttcharts/$fileName.png"))
     }
 }

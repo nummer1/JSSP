@@ -73,6 +73,7 @@ class ABC(val problem: Problem, val iterations: Int, val populationSize: Int, va
                 }
             }
         }
+        println("abc average: ${emplyoeeBees.sumBy { it.cost }/emplyoeeBees.size}")
         return bestSolution
     }
 }

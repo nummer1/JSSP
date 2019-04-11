@@ -29,7 +29,7 @@ class PSO(val problem: Problem, val iterations: Int, val populationSize: Int, va
                 p.updatePosition(best.listRep)
             }
         }
-        println("test: ${particles.sumBy { it.cost }/particles.size}")
+        println("pso average: ${particles.sumBy { it.cost }/particles.size}")
         return particles.minBy { it.cost }!!
     }
 }
