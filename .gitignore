@@ -5,3 +5,6 @@
 .idea/**/shelf
 *.iws
 out/
+Test Data/
+ganttcharts/
+articles/
