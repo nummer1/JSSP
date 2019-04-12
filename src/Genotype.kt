@@ -21,6 +21,13 @@ class RandomKeyList(val problem: Problem, val maxV: Double) {
         fitness = 0.0
     }
 
+    private fun checkInitialisation() {
+        // prints error if initialisation already happened
+        if (listRep.isNotEmpty()) {
+            println("Error in RandomKeyList: listRep already initialised")
+        }
+    }
+
     private fun createPheno() {
         // create phenotype and calculate cost
         if (listRep.isEmpty()) {
@@ -31,13 +38,6 @@ class RandomKeyList(val problem: Problem, val maxV: Double) {
         fitness = 1.0/cost
     }
 
-    private fun checkInitialisation() {
-        // prints error if initialisation already happened
-        if (listRep.isNotEmpty()) {
-            println("Error in RandomKeyList: listRep already initialised")
-        }
-    }
-
     fun randomInitialisation() {
         // randomly initialize the keyList
         checkInitialisation()
@@ -46,6 +46,12 @@ class RandomKeyList(val problem: Problem, val maxV: Double) {
             velocity.addAll(MutableList<Double>(job.size) { Random.nextDouble(-maxV, maxV) })
         }
         pBest.addAll(listRep)
+        createPheno()
+    }
+
+    fun copyInitialization(randKey: RandomKeyList) {
+        checkInitialisation()
+        listRep.addAll(randKey.listRep)
         createPheno()
     }
 

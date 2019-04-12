@@ -1,4 +1,4 @@
-
+import java.util.*
 
 
 class PSO(val problem: Problem, val iterations: Int, val populationSize: Int, val maxV: Double) {
@@ -20,16 +20,24 @@ class PSO(val problem: Problem, val iterations: Int, val populationSize: Int, va
             particles.add(pop)
         }
 
+        var best = particles.minBy { it.cost }!!
+        if (best.cost < gBest.cost) {
+            gBest.copyInitialization(best)
+        }
+
         for (k in 0.until(iterations)) {
-
-            val best = particles.minBy { it.cost }!!
-            if (best.cost < gBest.cost) { gBest = best }
-
             for (p in particles) {
                 p.updatePosition(best.listRep)
             }
+
+            best = particles.minBy { it.cost }!!
+            if (best.cost < gBest.cost) {
+                gBest = RandomKeyList(problem, maxV)
+                gBest.copyInitialization(best)
+            }
         }
+
         println("pso average: ${particles.sumBy { it.cost }/particles.size}")
-        return particles.minBy { it.cost }!!
+        return gBest
     }
 }
