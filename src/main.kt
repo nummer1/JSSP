@@ -12,7 +12,7 @@ fun main(args: Array<String>) {
     val psoGeno = pso.run()
 
     println("abc rep: ${abcGeno.listRep}")
-    println("pso rep: ${psoGeno.listRep}")
+    println("pso rep: ${psoGeno.listRep.map { "%.4f".format(it) }}")
     println("abc min_cost: ${abcGeno.cost}")
     println("pso min_cost: ${psoGeno.cost}")
 
