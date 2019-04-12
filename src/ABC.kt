@@ -25,7 +25,7 @@ class ABC(val problem: Problem, val iterations: Int, val populationSize: Int, va
             onlookerBees.add(pop)
         }
 
-        var bestSolution = emplyoeeBees[0]
+        var bestSolution = PermutationList(problem)
         for (k in 0.until(iterations)) {
             // employeeBees checks for better neighbours
             for ((i, pop) in emplyoeeBees.withIndex()) {
@@ -69,7 +69,8 @@ class ABC(val problem: Problem, val iterations: Int, val populationSize: Int, va
                     cyclesSinceImproved[i] = 0
                 }
                 if (emplyoeeBees[i].cost < bestSolution.cost) {
-                    bestSolution = emplyoeeBees[i]
+                    bestSolution = PermutationList(problem)
+                    bestSolution.copyInitialisation(emplyoeeBees[i])
                 }
             }
         }

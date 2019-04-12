@@ -49,7 +49,7 @@ class RandomKeyList(val problem: Problem, val maxV: Double) {
         createPheno()
     }
 
-    fun copyInitialization(randKey: RandomKeyList) {
+    fun copyInitialisation(randKey: RandomKeyList) {
         checkInitialisation()
         listRep.addAll(randKey.listRep)
         createPheno()
@@ -184,6 +184,12 @@ class PermutationList(val problem: Problem) {
             rand < 0.75 -> {swap(); swap()}
             else -> {insert(); insert()}
         }
+        createPheno()
+    }
+
+    fun copyInitialisation(permList: PermutationList) {
+        checkInitialisation()
+        listRep.addAll(permList.listRep)
         createPheno()
     }
 

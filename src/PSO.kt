@@ -22,7 +22,7 @@ class PSO(val problem: Problem, val iterations: Int, val populationSize: Int, va
 
         var best = particles.minBy { it.cost }!!
         if (best.cost < gBest.cost) {
-            gBest.copyInitialization(best)
+            gBest.copyInitialisation(best)
         }
 
         for (k in 0.until(iterations)) {
@@ -33,7 +33,7 @@ class PSO(val problem: Problem, val iterations: Int, val populationSize: Int, va
             best = particles.minBy { it.cost }!!
             if (best.cost < gBest.cost) {
                 gBest = RandomKeyList(problem, maxV)
-                gBest.copyInitialization(best)
+                gBest.copyInitialisation(best)
             }
         }
 
