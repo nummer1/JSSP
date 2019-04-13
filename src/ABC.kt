@@ -3,58 +3,66 @@ import kotlin.random.Random
 
 class ABC(val problem: Problem, val iterations: Int, val populationSize: Int, val limit: Int) {
 
-    private val emplyoeeBees: MutableList<PermutationList>
+    private val employeeBees: MutableList<PermutationList>
     private val onlookerBees: MutableList<PermutationList>
     private val cyclesSinceImproved: MutableList<Int>
+    private var best: PermutationList
 
     init {
-        emplyoeeBees = mutableListOf()
+        employeeBees = mutableListOf()
         onlookerBees = mutableListOf()
         cyclesSinceImproved = mutableListOf()
+        best = PermutationList(problem)
     }
 
-    fun run(): PermutationList {
+    private fun printInfo() {
+        println("    abc onlooker average: ${onlookerBees.sumBy { it.cost }/onlookerBees.size}")
+        println("    abc employee average: ${employeeBees.sumBy { it.cost }/employeeBees.size}")
+        println("    abc min_cost: ${best.cost}")
+    }
+
+    fun run(printI: Boolean=false): PermutationList {
         // initialise population
         for (i in 0.until(populationSize)) {
             // initialise employeeBees
             val pop = PermutationList(problem)
             pop.randomInitialisation()
-            emplyoeeBees.add(pop)
+            employeeBees.add(pop)
             cyclesSinceImproved.add(0)
             // initialise employee bees
             onlookerBees.add(pop)
         }
 
-        var bestSolution = PermutationList(problem)
         for (k in 0.until(iterations)) {
             // employeeBees checks for better neighbours
-            for ((i, pop) in emplyoeeBees.withIndex()) {
-                val randPop = emplyoeeBees[(i + Random.nextInt(1, populationSize)) % populationSize]
+            for ((i, pop) in employeeBees.withIndex()) {
+                val randPop = employeeBees[(i + Random.nextInt(1, populationSize)) % populationSize]
                 val newPop = PermutationList(problem)
                 newPop.neighbourInitialisation(randPop)
                 if (newPop.cost < pop.cost) {
-                    emplyoeeBees[i] = newPop
+                    employeeBees[i] = newPop
                     cyclesSinceImproved[i] = 0
                 }
             }
 
             // onlookerBees checks for better neighbour in promising regions
             var totalFitness = 0.0
-            val cumulativeFitness = MutableList<Double>(populationSize) { totalFitness += emplyoeeBees[it].fitness; totalFitness }
+            val cumulativeFitness = MutableList<Double>(populationSize) { totalFitness += employeeBees[it].fitness; totalFitness }
             for (i in onlookerBees.indices) {
                 val rand = Random.nextDouble(0.0, totalFitness)
-                var randPop = emplyoeeBees[i]
+                var randPop = employeeBees[i]
                 for ((j, cf) in cumulativeFitness.withIndex()) {
                     if (rand < cf) {
-                        randPop = emplyoeeBees[j]
+                        randPop = employeeBees[j]
                         break
                     }
                 }
 
                 val newPop = PermutationList(problem)
                 newPop.neighbourInitialisation(randPop)
-                if (newPop.cost < emplyoeeBees[i].cost) {
-                    emplyoeeBees[i] = newPop
+                onlookerBees[i] = newPop
+                if (newPop.cost < employeeBees[i].cost) {
+                    employeeBees[i] = newPop
                     cyclesSinceImproved[i] = 0
                 }
             }
@@ -65,16 +73,22 @@ class ABC(val problem: Problem, val iterations: Int, val populationSize: Int, va
                 if (cyclesSinceImproved[i] >= limit) {
                     val newPop = PermutationList(problem)
                     newPop.randomInitialisation()
-                    emplyoeeBees[i] = newPop
+                    employeeBees[i] = newPop
                     cyclesSinceImproved[i] = 0
                 }
-                if (emplyoeeBees[i].cost < bestSolution.cost) {
-                    bestSolution = PermutationList(problem)
-                    bestSolution.copyInitialisation(emplyoeeBees[i])
+                if (employeeBees[i].cost < best.cost) {
+                    best = PermutationList(problem)
+                    best.copyInitialisation(employeeBees[i])
                 }
             }
+
+            if (printI && k%100 == 0) {
+                println("abc iterations $k:")
+                printInfo()
+            }
         }
-        println("abc average: ${emplyoeeBees.sumBy { it.cost }/emplyoeeBees.size}")
-        return bestSolution
+
+        printInfo()
+        return best
     }
 }

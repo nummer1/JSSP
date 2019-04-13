@@ -1,4 +1,4 @@
-import java.util.*
+
 
 
 class PSO(val problem: Problem, val iterations: Int, val populationSize: Int, val maxV: Double) {
@@ -11,7 +11,12 @@ class PSO(val problem: Problem, val iterations: Int, val populationSize: Int, va
         gBest = RandomKeyList(problem, maxV)
     }
 
-    fun run(): RandomKeyList {
+    private fun printInfo() {
+        println("    pso average: ${particles.sumBy { it.cost }/particles.size}")
+        println("    pso min_cost: ${gBest.cost}")
+    }
+
+    fun run(printI: Boolean=false): RandomKeyList {
         // initialise population
         for (i in 0.until(populationSize)) {
             // initialise employeeBees
@@ -35,9 +40,14 @@ class PSO(val problem: Problem, val iterations: Int, val populationSize: Int, va
                 gBest = RandomKeyList(problem, maxV)
                 gBest.copyInitialisation(best)
             }
+
+            if (printI && k%100 == 0) {
+                println("pso iterations $k:")
+                printInfo()
+            }
         }
 
-        println("pso average: ${particles.sumBy { it.cost }/particles.size}")
+        printInfo()
         return gBest
     }
 }
