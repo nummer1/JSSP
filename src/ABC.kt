@@ -63,9 +63,9 @@ class ABC(val problem: Problem, val iterations: Int, val populationSize: Int, va
                 val newPop = PermutationList(problem)
                 newPop.neighbourInitialisation(randPop)
                 onlookerBees[i] = newPop
-                if (newPop.cost < employeeBees[randPopIndex].cost) {
-                    employeeBees[randPopIndex] = newPop
-                    cyclesSinceImproved[randPopIndex] = 0
+                if (newPop.cost < employeeBees[i].cost) {
+                    employeeBees[i] = newPop
+                    cyclesSinceImproved[i] = 0
                 }
             }
 
