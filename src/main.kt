@@ -3,12 +3,11 @@
 
 fun main(args: Array<String>) {
     val p = Problem()
-    p.read("Test Data/5.txt")
+    p.read("Test Data/6.txt")
 
     // NOTE: ABC population-size is twice as high as populationSize-parameter (onlooker- and employee-bees)
-    println("NEW:")
-    val abc = ABC(p, 5000, 100, 100)
-    val pso = PSO(p, 5000, 200, 0.1)
+    val abc = ABC(p, 1000, 100, 100)
+    val pso = PSO(p, 1000, 200, 0.1)
     val abcGeno = abc.run(printI=false)
     val psoGeno = pso.run(printI=false)
 

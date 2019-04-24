@@ -1,4 +1,4 @@
-
+import java.util.concurrent.Executors
 
 
 class PSO(val problem: Problem, val iterations: Int, val populationSize: Int, val maxV: Double) {
@@ -31,9 +31,13 @@ class PSO(val problem: Problem, val iterations: Int, val populationSize: Int, va
         }
 
         for (k in 0.until(iterations)) {
+            val executor = Executors.newFixedThreadPool(6)
             for (p in particles) {
-                p.updatePosition(best.listRep)
+                val worker = Runnable { p.updatePosition(best.listRep) }
+                executor.execute(worker)
             }
+            executor.shutdown()
+            while (!executor.isTerminated)
 
             best = particles.minBy { it.cost }!!
             if (best.cost < gBest.cost) {
