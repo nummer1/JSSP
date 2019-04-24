@@ -6,7 +6,7 @@ fun main(args: Array<String>) {
     p.read("Test Data/6.txt")
 
     // NOTE: ABC population-size is twice as high as populationSize-parameter (onlooker- and employee-bees)
-    val abc = ABC(p, 1000, 100, 600)
+    val abc = ABC(p, 1000, 100, 1000)
     val pso = PSO(p, 1000, 200, 0.1)
     val abcGeno = abc.run(printI=false)
     val psoGeno = pso.run(printI=false)
