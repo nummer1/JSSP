@@ -36,9 +36,9 @@ class ABC(val problem: Problem, val iterations: Int, val populationSize: Int, va
         for (k in 0.until(iterations)) {
             // employeeBees checks for better neighbours
             for ((i, pop) in employeeBees.withIndex()) {
-                val randPop = employeeBees[(i + Random.nextInt(1, populationSize)) % populationSize]
+                // val randPop = employeeBees[(i + Random.nextInt(1, populationSize)) % populationSize]
                 val newPop = PermutationList(problem)
-                newPop.neighbourInitialisation(randPop)
+                newPop.neighbourInitialisation(pop)
                 if (newPop.cost < pop.cost) {
                     employeeBees[i] = newPop
                     cyclesSinceImproved[i] = 0
@@ -51,9 +51,11 @@ class ABC(val problem: Problem, val iterations: Int, val populationSize: Int, va
             for (i in onlookerBees.indices) {
                 val rand = Random.nextDouble(0.0, totalFitness)
                 var randPop = employeeBees[i]
+                var randPopIndex = -1
                 for ((j, cf) in cumulativeFitness.withIndex()) {
                     if (rand < cf) {
                         randPop = employeeBees[j]
+                        randPopIndex = j
                         break
                     }
                 }
@@ -61,9 +63,9 @@ class ABC(val problem: Problem, val iterations: Int, val populationSize: Int, va
                 val newPop = PermutationList(problem)
                 newPop.neighbourInitialisation(randPop)
                 onlookerBees[i] = newPop
-                if (newPop.cost < employeeBees[i].cost) {
-                    employeeBees[i] = newPop
-                    cyclesSinceImproved[i] = 0
+                if (newPop.cost < employeeBees[randPopIndex].cost) {
+                    employeeBees[randPopIndex] = newPop
+                    cyclesSinceImproved[randPopIndex] = 0
                 }
             }
 
